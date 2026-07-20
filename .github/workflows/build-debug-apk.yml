@@ -1,0 +1,52 @@
+name: Build debug APK
+
+# Manual trigger only: builds a debug APK of the current branch and
+# publishes it as a GitHub Release so it can be downloaded and installed
+# on a phone for preview. Not a production/signed release build.
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Release tag (defaults to preview-<run number>)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - run: flutter pub get
+
+      - run: flutter build apk --debug
+
+      - name: Determine release tag
+        id: tag
+        run: |
+          if [ -n "${{ inputs.release_tag }}" ]; then
+            echo "tag=${{ inputs.release_tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=preview-${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Rename APK
+        run: cp build/app/outputs/flutter-apk/app-debug.apk zikr-debug.apk
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: "Zikr preview (${{ steps.tag.outputs.tag }})"
+          body: |
+            Debug APK build for preview on a phone. Not a signed/production
+            release — built automatically from ${{ github.ref_name }}
+            (${{ github.sha }}).
+          prerelease: true
+          files: zikr-debug.apk
