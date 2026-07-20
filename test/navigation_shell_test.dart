@@ -15,6 +15,14 @@ void main() {
   testWidgets('bottom nav switches tabs and More pushes a sub-screen', (
     tester,
   ) async {
+    // The More list now has 9 rows; give the surface enough height that
+    // every row (including "Settings") is laid out and tappable without
+    // needing to scroll the list first.
+    tester.view.physicalSize = const Size(400, 1200);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
     await tester.pumpWidget(const ProviderScope(child: ZikrApp()));
     await tester.pumpAndSettle();
 

@@ -51,17 +51,21 @@ lib/
     router/      # app_router.dart (GoRouter config), navigation_shell.dart (bottom nav)
     theme/       # app_colors.dart, app_theme.dart (light/dark ThemeData)
     widgets/     # shared reusable widgets, e.g. placeholder_screen.dart
-  data/          # (empty so far) models, local data sources (Hive boxes, JSON
-                 # asset loaders) — to be filled in as features need persistence
-  features/      # one folder per feature, screen-only for now:
-                 # home, prayer_times, duas, tasbeeh, more, adhkar, hadith, names,
-                 # namaz_tracker, qibla, favorites, progress, settings
-                 # ("home" is the dashboard tab; "more" is the nav hub screen
-                 # that links to the features not on the bottom bar)
+  data/          # shared data sources: hive_boxes.dart (box name constants),
+                 # dhikr_repository.dart (DhikrEntry model + JSON asset loader +
+                 # dhikrLibraryProvider)
+  features/      # one folder per feature:
+                 # home (dashboard grid), tasbeeh (full feature: Hive-backed
+                 # counter, goal/dhikr selection, sound/vibration), dhikr_library
+                 # (list + detail screens for the bundled dhikr content), more
+                 # (nav hub), prayer_times, duas, adhkar, hadith, names,
+                 # namaz_tracker, qibla, favorites, progress, settings — the
+                 # rest still screen-only placeholders
   app.dart       # MaterialApp.router root widget
-  main.dart      # entry point: Hive.initFlutter() + ProviderScope
+  main.dart      # entry point: Hive.initFlutter(), opens the tasbeeh box, ProviderScope
 assets/
-  data/          # bundled JSON: duas.json, hadith.json, names.json, adhkar.json (empty so far)
+  data/          # bundled JSON: dhikr.json (11 entries — see "Dhikr Library" below).
+                 # duas.json, hadith.json, names.json, adhkar.json still to come.
   images/        # (empty so far)
   fonts/         # (empty so far) — for a locally-bundled Arabic-appropriate typeface later;
                  # deliberately not using google_fonts package, since its default
@@ -81,6 +85,26 @@ secondary accent — no literal religious iconography. Light mode uses a warm
 off-white background; dark mode uses a deep charcoal-green. Typography is the
 Material 3 default type ramp with restrained weight/spacing tweaks — no custom or
 network-fetched fonts yet.
+
+### Tasbeeh Counter (Phase 3)
+Tap-anywhere-on-the-ring counter with a circular progress indicator, preset/custom
+goals, preset/custom dhikr, pause/reset, and sound (`SystemSound.play`) / vibration
+(`HapticFeedback`) toggles — no new packages needed for either. State lives in a
+`Notifier<TasbeehState>` (`tasbeehProvider`) that auto-saves every field to the
+`tasbeeh` Hive box on each change, so progress survives closing the app.
+
+### Dhikr Library (Phase 4)
+`assets/data/dhikr.json` bundles 11 short dhikr/dua entries (Arabic, transliteration,
+meaning, reference), browsable via a list → detail screen (reachable from "More"),
+and feeds the Tasbeeh dhikr dropdown directly (`dhikrLibraryProvider`) instead of a
+hardcoded preset list. **Content sourcing**: scoped to Hisnul Muslim entries that
+trace to the Quran or one of Sahih Bukhari, Sahih Muslim, Sunan Abu Dawood, Jami'
+at-Tirmidhi, Sunan an-Nasa'i, Sunan Ibn Majah, or Musnad Ahmad, per your explicit
+direction. Every hadith citation was verified against sunnah.com (not just recalled
+from memory) before being added. Longer multi-clause supplications (Sayyid
+al-Istighfar, "Asbahna wa asbahal mulku lillah", etc.) were deliberately excluded —
+not a sourcing problem, just out of scope for this single-phrase tasbeeh-style
+library; they belong to the separate Morning & Evening Adhkar feature later.
 
 ## Coding conventions
 - Small, focused widgets. Extract reusable widgets into `core/widgets/`.

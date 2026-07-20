@@ -4,20 +4,12 @@ import 'package:hive/hive.dart';
 
 import '../../data/hive_boxes.dart';
 
-/// Standard, widely-known tasbeeh phrases (not a sourced Hadith/Dua text —
-/// just the common transliterations used in every tasbeeh counter).
-const List<String> tasbeehDhikrPresets = [
-  'SubhanAllah',
-  'Alhamdulillah',
-  'Allahu Akbar',
-  'La ilaha illallah',
-  'Astaghfirullah',
-  'La hawla wala quwwata illa billah',
-];
-
 const List<int> tasbeehGoalPresets = [33, 34, 50, 100, 300, 500, 1000];
 
-const _defaultDhikr = 'SubhanAllah';
+/// Matches the "Subhan Allah" entry's transliteration in
+/// assets/data/dhikr.json exactly, so it resolves as a preset (not "Custom")
+/// the first time the dropdown loads the library.
+const _defaultDhikr = 'Subhan Allah';
 const _defaultGoal = 33;
 
 class TasbeehState {
