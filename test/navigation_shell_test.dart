@@ -11,7 +11,7 @@ void main() {
     await tester.pumpWidget(const ProviderScope(child: ZikrApp()));
     await tester.pumpAndSettle();
 
-    expect(find.text('Coming soon'), findsOneWidget); // Home placeholder
+    expect(find.text('Tasbeeh Counter'), findsOneWidget); // Home dashboard
 
     await tester.tap(find.text('Tasbeeh'));
     await tester.pumpAndSettle();
