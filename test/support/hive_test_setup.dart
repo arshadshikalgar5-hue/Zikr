@@ -12,6 +12,7 @@ Future<void> initTestHive() async {
   _tempDir = await Directory.systemTemp.createTemp('zikr_hive_test_');
   Hive.init(_tempDir!.path);
   await Hive.openBox(HiveBoxes.tasbeeh);
+  await Hive.openBox(HiveBoxes.customDhikr);
 }
 
 /// Deliberately doesn't call `box.close()` / `Hive.deleteBoxFromDisk()`:

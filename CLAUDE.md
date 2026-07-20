@@ -53,11 +53,13 @@ lib/
     widgets/     # shared reusable widgets, e.g. placeholder_screen.dart
   data/          # shared data sources: hive_boxes.dart (box name constants),
                  # dhikr_repository.dart (DhikrEntry model + JSON asset loader +
-                 # dhikrLibraryProvider)
+                 # dhikrLibraryProvider), custom_dhikr_repository.dart
+                 # (CustomDhikrEntry model + Hive-backed CRUD + customDhikrProvider)
   features/      # one folder per feature:
                  # home (dashboard grid), tasbeeh (full feature: Hive-backed
                  # counter, goal/dhikr selection, sound/vibration), dhikr_library
-                 # (list + detail screens for the bundled dhikr content), more
+                 # (list + detail screens for the bundled dhikr content),
+                 # custom_dhikr (add/edit/delete the user's own dhikr), more
                  # (nav hub), prayer_times, duas, adhkar, hadith, names,
                  # namaz_tracker, qibla, favorites, progress, settings — the
                  # rest still screen-only placeholders
@@ -105,6 +107,21 @@ from memory) before being added. Longer multi-clause supplications (Sayyid
 al-Istighfar, "Asbahna wa asbahal mulku lillah", etc.) were deliberately excluded —
 not a sourcing problem, just out of scope for this single-phrase tasbeeh-style
 library; they belong to the separate Morning & Evening Adhkar feature later.
+
+### Custom Dhikr (Phase 5)
+Users can add their own dhikr/dua (required text, optional transliteration/meaning)
+via a form screen reachable from "More" → "Custom Dhikr"; entries are editable, and
+deletable via swipe-to-dismiss with a confirmation dialog. Stored in the
+`custom_dhikr` Hive box (`CustomDhikrEntry`, `customDhikrProvider`) and merged into
+the Tasbeeh dhikr dropdown alongside the bundled library. **Hive gotcha found this
+phase**: `CustomDhikrNotifier`'s mutators are synchronous and never `await` the
+`Box.put`/`Box.delete` call — matching `TasbeehNotifier`'s existing pattern. `Box`
+updates its in-memory state synchronously and flushes to disk in the background;
+awaiting that flush inside a widget callback hung every time under `flutter test`
+(the real I/O future never resolves inside the test binding's FakeAsync zone).
+Keep this pattern for any future Hive-backed notifier. Also: Hive int keys must
+fit in `0 - 0xFFFFFFFF`, so entry ids are a small sequential counter, not a
+timestamp.
 
 ## Coding conventions
 - Small, focused widgets. Extract reusable widgets into `core/widgets/`.

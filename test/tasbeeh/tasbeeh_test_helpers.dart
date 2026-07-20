@@ -22,7 +22,10 @@ void setUpTasbeehTests() {
     await initTestHive();
   });
   tearDownAll(disposeTestHive);
-  setUp(() => Hive.box(HiveBoxes.tasbeeh).clear());
+  setUp(() {
+    Hive.box(HiveBoxes.tasbeeh).clear();
+    Hive.box(HiveBoxes.customDhikr).clear();
+  });
 }
 
 /// The Tasbeeh screen's content is taller than the default 800x600 test
