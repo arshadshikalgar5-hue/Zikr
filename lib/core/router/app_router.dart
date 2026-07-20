@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../data/dhikr_repository.dart';
 import '../../features/adhkar/adhkar_screen.dart';
+import '../../features/dhikr_library/dhikr_detail_screen.dart';
+import '../../features/dhikr_library/dhikr_library_screen.dart';
 import '../../features/duas/duas_screen.dart';
 import '../../features/favorites/favorites_screen.dart';
 import '../../features/hadith/hadith_screen.dart';
@@ -111,6 +114,17 @@ final GoRouter appRouter = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       path: AppRoutes.settings,
       builder: (context, state) => const SettingsScreen(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: AppRoutes.dhikrLibrary,
+      builder: (context, state) => const DhikrLibraryScreen(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: AppRoutes.dhikrDetail,
+      builder: (context, state) =>
+          DhikrDetailScreen(entry: state.extra! as DhikrEntry),
     ),
   ],
 );

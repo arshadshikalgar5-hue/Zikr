@@ -8,6 +8,11 @@ class MoreScreen extends StatelessWidget {
 
   static const _items = [
     _MoreItem('Adhkar', Icons.spa_outlined, AppRoutes.adhkar),
+    _MoreItem(
+      'Dhikr Library',
+      Icons.library_books_outlined,
+      AppRoutes.dhikrLibrary,
+    ),
     _MoreItem('Hadith', Icons.auto_stories_outlined, AppRoutes.hadith),
     _MoreItem('99 Names', Icons.star_border, AppRoutes.names),
     _MoreItem('Namaz Tracker', Icons.checklist_outlined, AppRoutes.namazTracker),

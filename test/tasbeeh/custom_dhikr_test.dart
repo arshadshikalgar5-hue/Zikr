@@ -12,6 +12,7 @@ void main() {
     tester,
   ) async {
     await pumpTasbeeh(tester);
+    await settle(tester); // dhikr dropdown loads its presets asynchronously
 
     await tester.tap(find.byType(DropdownButtonFormField<String>));
     await settle(tester);

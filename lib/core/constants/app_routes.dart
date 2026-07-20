@@ -16,4 +16,6 @@ abstract final class AppRoutes {
   static const favorites = '/favorites';
   static const progress = '/progress';
   static const settings = '/settings';
+  static const dhikrLibrary = '/dhikr-library';
+  static const dhikrDetail = '/dhikr-detail';
 }

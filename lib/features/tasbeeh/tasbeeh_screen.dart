@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/dhikr_repository.dart';
 import 'tasbeeh_controller.dart';
 
 class TasbeehScreen extends ConsumerWidget {
@@ -45,16 +46,40 @@ class TasbeehScreen extends ConsumerWidget {
   }
 }
 
-/// Preset/custom dhikr dropdown. Kept stateful only to hold the
-/// [TextEditingController] for the custom-text field.
-class _DhikrSelector extends ConsumerStatefulWidget {
+/// Loads the preset options from the bundled dhikr library before handing
+/// off to [_DhikrDropdown] — the dropdown needs the full preset list
+/// available at construction time (see below), so it only mounts once the
+/// library has loaded.
+class _DhikrSelector extends ConsumerWidget {
   const _DhikrSelector();
 
   @override
-  ConsumerState<_DhikrSelector> createState() => _DhikrSelectorState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final library = ref.watch(dhikrLibraryProvider);
+
+    return library.when(
+      data: (entries) => _DhikrDropdown(
+        presets: [for (final entry in entries) entry.transliteration],
+      ),
+      loading: () => const LinearProgressIndicator(),
+      error: (error, stackTrace) =>
+          const Text('Could not load dhikr options.'),
+    );
+  }
 }
 
-class _DhikrSelectorState extends ConsumerState<_DhikrSelector> {
+/// Preset/custom dhikr dropdown. Kept stateful only to hold the
+/// [TextEditingController] for the custom-text field.
+class _DhikrDropdown extends ConsumerStatefulWidget {
+  const _DhikrDropdown({required this.presets});
+
+  final List<String> presets;
+
+  @override
+  ConsumerState<_DhikrDropdown> createState() => _DhikrDropdownState();
+}
+
+class _DhikrDropdownState extends ConsumerState<_DhikrDropdown> {
   late final TextEditingController _customController;
   late bool _customMode;
 
@@ -62,7 +87,7 @@ class _DhikrSelectorState extends ConsumerState<_DhikrSelector> {
   void initState() {
     super.initState();
     final dhikr = ref.read(tasbeehProvider).dhikr;
-    _customMode = !tasbeehDhikrPresets.contains(dhikr);
+    _customMode = !widget.presets.contains(dhikr);
     _customController = TextEditingController(text: _customMode ? dhikr : '');
   }
 
@@ -88,7 +113,7 @@ class _DhikrSelectorState extends ConsumerState<_DhikrSelector> {
             border: OutlineInputBorder(),
           ),
           items: [
-            for (final preset in tasbeehDhikrPresets)
+            for (final preset in widget.presets)
               DropdownMenuItem(
                 value: preset,
                 child: Text(preset, overflow: TextOverflow.ellipsis),
