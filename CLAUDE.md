@@ -54,20 +54,26 @@ lib/
   data/          # shared data sources: hive_boxes.dart (box name constants),
                  # dhikr_repository.dart (DhikrEntry model + JSON asset loader +
                  # dhikrLibraryProvider), custom_dhikr_repository.dart
-                 # (CustomDhikrEntry model + Hive-backed CRUD + customDhikrProvider)
+                 # (CustomDhikrEntry model + Hive-backed CRUD + customDhikrProvider),
+                 # duas_repository.dart (DuaEntry model + JSON asset loader +
+                 # duasProvider + duaCategoriesOf()), favorite_duas_repository.dart
+                 # (Hive-backed favorite-id set + favoriteDuasProvider)
   features/      # one folder per feature:
                  # home (dashboard grid), tasbeeh (full feature: Hive-backed
                  # counter, goal/dhikr selection, sound/vibration), dhikr_library
                  # (list + detail screens for the bundled dhikr content),
-                 # custom_dhikr (add/edit/delete the user's own dhikr), more
-                 # (nav hub), prayer_times, duas, adhkar, hadith, names,
-                 # namaz_tracker, qibla, favorites, progress, settings — the
-                 # rest still screen-only placeholders
+                 # custom_dhikr (add/edit/delete the user's own dhikr), duas
+                 # (data-driven category list, category → dua list, detail with
+                 # favorite toggle, cross-category search), more (nav hub),
+                 # prayer_times, adhkar, hadith, names, namaz_tracker, qibla,
+                 # favorites, progress, settings — the rest still screen-only
+                 # placeholders
   app.dart       # MaterialApp.router root widget
-  main.dart      # entry point: Hive.initFlutter(), opens the tasbeeh box, ProviderScope
+  main.dart      # entry point: Hive.initFlutter(), opens the Hive boxes, ProviderScope
 assets/
-  data/          # bundled JSON: dhikr.json (11 entries — see "Dhikr Library" below).
-                 # duas.json, hadith.json, names.json, adhkar.json still to come.
+  data/          # bundled JSON: dhikr.json (11 entries — see "Dhikr Library" below),
+                 # duas.json (12 categories — see "Daily Duas" below).
+                 # hadith.json, names.json, adhkar.json still to come.
   images/        # (empty so far)
   fonts/         # (empty so far) — for a locally-bundled Arabic-appropriate typeface later;
                  # deliberately not using google_fonts package, since its default
@@ -123,12 +129,53 @@ Keep this pattern for any future Hive-backed notifier. Also: Hive int keys must
 fit in `0 - 0xFFFFFFFF`, so entry ids are a small sequential counter, not a
 timestamp.
 
+### Daily Duas (Phase 6)
+`assets/data/duas.json` bundles 12 categories (Sleep, Wake Up, Travel, Eating, Home,
+Mosque, Rain, Parents, Forgiveness, Sickness, Marriage, Istikhara), one dua each to
+start. **Data-driven, not an enum**: the category list shown in the UI is derived
+from whichever `category` values are present in the JSON (`duaCategoriesOf()`), so
+adding a 13th category — or a 2nd dua in an existing one — needs only a JSON edit,
+no code change. Favoriting persists dua ids in the `favorite_duas` Hive box
+(`favoriteDuasProvider`), following the same synchronous-notifier pattern as
+Phase 5. Search is a `SearchDelegate` over the already-loaded dua list (category,
+transliteration, translation), no separate index needed at this size.
+**Content sourcing**: same standard as Phase 4 — every entry traces to the Quran or
+one of Sahih Bukhari, Sahih Muslim, Sunan Abu Dawood, Jami' at-Tirmidhi, Sunan
+an-Nasa'i, Sunan Ibn Majah, or Musnad Ahmad, and every citation was verified against
+sunnah.com/quran.com before being added, not recalled from memory alone; you
+confirmed the drafted list before it was finalized.
+
 ## Coding conventions
 - Small, focused widgets. Extract reusable widgets into `core/widgets/`.
 - Comment non-obvious logic, especially Islamic content structures and calculation
   logic (prayer times, qibla).
 - No excessive comments on self-explanatory code.
 - Keep each phase's code compiling and runnable before moving on.
+
+## Testing conventions (found across Phases 3–6, keep following these)
+- **One `testWidgets` per file.** Multiple tests in one file were observed to hang
+  or time out unpredictably in this sandbox's `flutter test` runner (each file is
+  its own process, so this buys reliable isolation at the cost of some startup
+  overhead). See `test/tasbeeh/tasbeeh_test_helpers.dart` and
+  `test/custom_dhikr/custom_dhikr_test_helpers.dart` for the pattern.
+- **Reset `appRouter` at the start of every pump.** `appRouter` (in
+  `lib/core/router/app_router.dart`) is a module-level singleton, so its location
+  survives across sequential tests in the same file even with one-test-per-file;
+  call `appRouter.go(AppRoutes.<somewhere>)` before `pumpWidget` in every shared
+  test helper's pump function.
+- **Never `await` a Hive `Box` write inside a widget test.** Whether it's app code
+  awaited from a widget callback, or a raw `Box.put`/`.add` called directly in a
+  test body — both hang forever inside `testWidgets`' FakeAsync zone, because the
+  real disk-flush Future never resolves there. Keep Hive-backed notifiers
+  synchronous (see the Phase 5 note above), and when seeding a box directly in a
+  test, don't `await` it either.
+- **`Hive.initFlutter()` doesn't work under `flutter test`** (no path_provider
+  platform channel). Use `test/support/hive_test_setup.dart`'s `initTestHive()`
+  (plain `Hive.init()` against a temp directory) instead.
+- **Mock `SystemChannels.platform`** before any test that exercises
+  `SystemSound.play`/`HapticFeedback` (i.e. anything that taps the Tasbeeh ring) —
+  see `test/support/mock_platform_channels.dart`. Without it the call hangs the
+  same way an awaited Hive write does.
 
 ## Update system (GitHub-based, no Play Store)
 - A `version.json` file hosted on a public GitHub repo (or Release) contains the

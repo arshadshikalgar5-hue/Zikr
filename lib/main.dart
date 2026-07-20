@@ -10,6 +10,7 @@ Future<void> main() async {
   await Hive.initFlutter();
   await Hive.openBox(HiveBoxes.tasbeeh);
   await Hive.openBox(HiveBoxes.customDhikr);
+  await Hive.openBox(HiveBoxes.favoriteDuas);
 
   runApp(const ProviderScope(child: ZikrApp()));
 }
