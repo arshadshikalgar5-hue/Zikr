@@ -4,7 +4,14 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:zikr/app.dart';
 
+import 'support/hive_test_setup.dart';
+
 void main() {
+  // The Tasbeeh tab reads from Hive, so it needs to be initialized even
+  // though this test isn't exercising the counter itself.
+  setUpAll(initTestHive);
+  tearDownAll(disposeTestHive);
+
   testWidgets('bottom nav switches tabs and More pushes a sub-screen', (
     tester,
   ) async {
