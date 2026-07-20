@@ -1,11 +1,18 @@
 # Miscellaneous
 *.class
 *.lock
+!pubspec.lock
 *.log
 *.pyc
 *.swp
 .buildlog/
 .history
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.DS_Store
 
 
 
