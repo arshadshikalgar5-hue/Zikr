@@ -13,6 +13,7 @@ Future<void> initTestHive() async {
   Hive.init(_tempDir!.path);
   await Hive.openBox(HiveBoxes.tasbeeh);
   await Hive.openBox(HiveBoxes.customDhikr);
+  await Hive.openBox(HiveBoxes.favoriteDuas);
 }
 
 /// Deliberately doesn't call `box.close()` / `Hive.deleteBoxFromDisk()`:

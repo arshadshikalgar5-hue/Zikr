@@ -3,11 +3,14 @@ import 'package:go_router/go_router.dart';
 
 import '../../data/custom_dhikr_repository.dart';
 import '../../data/dhikr_repository.dart';
+import '../../data/duas_repository.dart';
 import '../../features/adhkar/adhkar_screen.dart';
 import '../../features/custom_dhikr/custom_dhikr_form_screen.dart';
 import '../../features/custom_dhikr/custom_dhikr_screen.dart';
 import '../../features/dhikr_library/dhikr_detail_screen.dart';
 import '../../features/dhikr_library/dhikr_library_screen.dart';
+import '../../features/duas/dua_category_screen.dart';
+import '../../features/duas/dua_detail_screen.dart';
 import '../../features/duas/duas_screen.dart';
 import '../../features/favorites/favorites_screen.dart';
 import '../../features/hadith/hadith_screen.dart';
@@ -139,6 +142,17 @@ final GoRouter appRouter = GoRouter(
       path: AppRoutes.customDhikrForm,
       builder: (context, state) =>
           CustomDhikrFormScreen(entry: state.extra as CustomDhikrEntry?),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: AppRoutes.duaCategory,
+      builder: (context, state) =>
+          DuaCategoryScreen(category: state.extra! as String),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: AppRoutes.duaDetail,
+      builder: (context, state) => DuaDetailScreen(dua: state.extra! as DuaEntry),
     ),
   ],
 );
