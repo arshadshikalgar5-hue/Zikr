@@ -57,23 +57,28 @@ lib/
                  # (CustomDhikrEntry model + Hive-backed CRUD + customDhikrProvider),
                  # duas_repository.dart (DuaEntry model + JSON asset loader +
                  # duasProvider + duaCategoriesOf()), favorite_duas_repository.dart
-                 # (Hive-backed favorite-id set + favoriteDuasProvider)
+                 # (Hive-backed favorite-id set + favoriteDuasProvider),
+                 # adhkar_repository.dart (AdhkarEntry model + JSON asset loader +
+                 # adhkarProvider), adhkar_progress_repository.dart (per-day
+                 # per-period completed-id sets + morning/eveningAdhkarProgressProvider)
   features/      # one folder per feature:
                  # home (dashboard grid), tasbeeh (full feature: Hive-backed
                  # counter, goal/dhikr selection, sound/vibration), dhikr_library
                  # (list + detail screens for the bundled dhikr content),
                  # custom_dhikr (add/edit/delete the user's own dhikr), duas
                  # (data-driven category list, category → dua list, detail with
-                 # favorite toggle, cross-category search), more (nav hub),
-                 # prayer_times, adhkar, hadith, names, namaz_tracker, qibla,
-                 # favorites, progress, settings — the rest still screen-only
-                 # placeholders
+                 # favorite toggle, cross-category search), adhkar (Morning/Evening
+                 # hub with today's progress, checklist screen with checkboxes),
+                 # more (nav hub), prayer_times, hadith, names, namaz_tracker,
+                 # qibla, favorites, progress, settings — the rest still
+                 # screen-only placeholders
   app.dart       # MaterialApp.router root widget
   main.dart      # entry point: Hive.initFlutter(), opens the Hive boxes, ProviderScope
 assets/
   data/          # bundled JSON: dhikr.json (11 entries — see "Dhikr Library" below),
-                 # duas.json (12 categories — see "Daily Duas" below).
-                 # hadith.json, names.json, adhkar.json still to come.
+                 # duas.json (12 categories — see "Daily Duas" below), adhkar.json
+                 # (13 morning + 14 evening entries — see "Morning & Evening Adhkar"
+                 # below). hadith.json, names.json still to come.
   images/        # (empty so far)
   fonts/         # (empty so far) — for a locally-bundled Arabic-appropriate typeface later;
                  # deliberately not using google_fonts package, since its default
@@ -144,6 +149,24 @@ one of Sahih Bukhari, Sahih Muslim, Sunan Abu Dawood, Jami' at-Tirmidhi, Sunan
 an-Nasa'i, Sunan Ibn Majah, or Musnad Ahmad, and every citation was verified against
 sunnah.com/quran.com before being added, not recalled from memory alone; you
 confirmed the drafted list before it was finalized.
+
+### Morning & Evening Adhkar (Phase 7)
+`assets/data/adhkar.json` bundles the core Hisnul Muslim morning/evening routine:
+13 morning entries and 14 evening entries (mostly the same content — a few, like
+"Asbahna.../Amsayna...", flip wording by time of day — plus the last two verses of
+Al-Baqarah, evening-only per its hadith). Each entry carries a `repeat` count (e.g.
+×3, ×7, ×100) shown as a chip. The Adhkar hub (More/Home → Adhkar) shows a
+"completed of total" card per period; tapping opens a checklist screen where each
+item is a tappable card with a checkbox — checking one persists immediately.
+**Storage** (`adhkar_progress` Hive box, `adhkarProgressKey(period, date)` →
+`List<String>` of completed ids): keyed by day so the checklist naturally resets
+each morning/evening, and the per-day history is already in the shape a future
+Progress feature needs (streaks, completion %) — `adhkarProgressKey()` is exported
+for that reuse. Same synchronous never-await-the-write notifier pattern as
+Phases 5–6. **Content sourcing**: same standard as Phases 4/6, confirmed with you
+before finalizing — you asked for two additions (the tahlil/istighfar ×100 duo and
+the last two verses of Al-Baqarah) beyond the initial draft, both verified against
+sunnah.com/quran.com before being added.
 
 ## Coding conventions
 - Small, focused widgets. Extract reusable widgets into `core/widgets/`.

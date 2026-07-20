@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../data/custom_dhikr_repository.dart';
 import '../../data/dhikr_repository.dart';
 import '../../data/duas_repository.dart';
+import '../../features/adhkar/adhkar_checklist_screen.dart';
 import '../../features/adhkar/adhkar_screen.dart';
 import '../../features/custom_dhikr/custom_dhikr_form_screen.dart';
 import '../../features/custom_dhikr/custom_dhikr_screen.dart';
@@ -153,6 +154,12 @@ final GoRouter appRouter = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       path: AppRoutes.duaDetail,
       builder: (context, state) => DuaDetailScreen(dua: state.extra! as DuaEntry),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: AppRoutes.adhkarChecklist,
+      builder: (context, state) =>
+          AdhkarChecklistScreen(period: state.extra! as String),
     ),
   ],
 );

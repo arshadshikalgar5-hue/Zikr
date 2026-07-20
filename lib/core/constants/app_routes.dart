@@ -22,4 +22,5 @@ abstract final class AppRoutes {
   static const customDhikrForm = '/custom-dhikr-form';
   static const duaCategory = '/dua-category';
   static const duaDetail = '/dua-detail';
+  static const adhkarChecklist = '/adhkar-checklist';
 }
