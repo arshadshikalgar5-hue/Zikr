@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../data/custom_dhikr_repository.dart';
 import '../../data/dhikr_repository.dart';
 import '../../features/adhkar/adhkar_screen.dart';
+import '../../features/custom_dhikr/custom_dhikr_form_screen.dart';
+import '../../features/custom_dhikr/custom_dhikr_screen.dart';
 import '../../features/dhikr_library/dhikr_detail_screen.dart';
 import '../../features/dhikr_library/dhikr_library_screen.dart';
 import '../../features/duas/duas_screen.dart';
@@ -125,6 +128,17 @@ final GoRouter appRouter = GoRouter(
       path: AppRoutes.dhikrDetail,
       builder: (context, state) =>
           DhikrDetailScreen(entry: state.extra! as DhikrEntry),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: AppRoutes.customDhikr,
+      builder: (context, state) => const CustomDhikrScreen(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: AppRoutes.customDhikrForm,
+      builder: (context, state) =>
+          CustomDhikrFormScreen(entry: state.extra as CustomDhikrEntry?),
     ),
   ],
 );

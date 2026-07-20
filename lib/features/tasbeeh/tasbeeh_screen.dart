@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/custom_dhikr_repository.dart';
 import '../../data/dhikr_repository.dart';
 import 'tasbeeh_controller.dart';
 
@@ -46,21 +47,26 @@ class TasbeehScreen extends ConsumerWidget {
   }
 }
 
-/// Loads the preset options from the bundled dhikr library before handing
-/// off to [_DhikrDropdown] — the dropdown needs the full preset list
-/// available at construction time (see below), so it only mounts once the
-/// library has loaded.
+/// Loads the preset options — the bundled library plus the user's own
+/// saved dhikr — before handing off to [_DhikrDropdown]: the dropdown needs
+/// the full preset list available at construction time (see below), so it
+/// only mounts once the library has loaded.
 class _DhikrSelector extends ConsumerWidget {
   const _DhikrSelector();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final library = ref.watch(dhikrLibraryProvider);
+    final customEntries = ref.watch(customDhikrProvider);
 
     return library.when(
-      data: (entries) => _DhikrDropdown(
-        presets: [for (final entry in entries) entry.transliteration],
-      ),
+      data: (entries) {
+        final presets = <String>{
+          for (final entry in entries) entry.transliteration,
+          for (final entry in customEntries) entry.displayLabel,
+        }.toList();
+        return _DhikrDropdown(presets: presets);
+      },
       loading: () => const LinearProgressIndicator(),
       error: (error, stackTrace) =>
           const Text('Could not load dhikr options.'),

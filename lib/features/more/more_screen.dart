@@ -13,6 +13,11 @@ class MoreScreen extends StatelessWidget {
       Icons.library_books_outlined,
       AppRoutes.dhikrLibrary,
     ),
+    _MoreItem(
+      'Custom Dhikr',
+      Icons.edit_note_outlined,
+      AppRoutes.customDhikr,
+    ),
     _MoreItem('Hadith', Icons.auto_stories_outlined, AppRoutes.hadith),
     _MoreItem('99 Names', Icons.star_border, AppRoutes.names),
     _MoreItem('Namaz Tracker', Icons.checklist_outlined, AppRoutes.namazTracker),

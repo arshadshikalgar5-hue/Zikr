@@ -18,4 +18,6 @@ abstract final class AppRoutes {
   static const settings = '/settings';
   static const dhikrLibrary = '/dhikr-library';
   static const dhikrDetail = '/dhikr-detail';
+  static const customDhikr = '/custom-dhikr';
+  static const customDhikrForm = '/custom-dhikr-form';
 }

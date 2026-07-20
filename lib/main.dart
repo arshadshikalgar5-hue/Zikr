@@ -9,6 +9,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   await Hive.openBox(HiveBoxes.tasbeeh);
+  await Hive.openBox(HiveBoxes.customDhikr);
 
   runApp(const ProviderScope(child: ZikrApp()));
 }
