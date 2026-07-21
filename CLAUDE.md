@@ -66,7 +66,10 @@ lib/
                  # (Hive-backed favorite-id set + favoriteHadithProvider),
                  # names_repository.dart (NameEntry model + JSON asset loader +
                  # namesProvider), favorite_names_repository.dart (Hive-backed
-                 # favorite-id set + favoriteNamesProvider)
+                 # favorite-id set + favoriteNamesProvider), namaz_tracker_repository.dart
+                 # (namazPrayers list + per-day completed-prayer sets +
+                 # namazTrackerProvider + DayCompletion/NamazStats aggregation +
+                 # namazStatsProvider)
   features/      # one folder per feature:
                  # home (dashboard grid), tasbeeh (full feature: Hive-backed
                  # counter, goal/dhikr selection, sound/vibration), dhikr_library
@@ -77,9 +80,10 @@ lib/
                  # hub with today's progress, checklist screen with checkboxes),
                  # hadith (same data-driven category/search/favorite shape as
                  # duas), names (flat 99-entry list, no categories — search +
-                 # favorite + detail), more (nav hub), prayer_times, namaz_tracker,
-                 # qibla, favorites, progress, settings — the rest still
-                 # screen-only placeholders
+                 # favorite + detail), namaz_tracker (Daily/Weekly/Monthly tabs,
+                 # tap-to-toggle prayer cards, streak banner), more (nav hub),
+                 # prayer_times, qibla, favorites, progress, settings — the rest
+                 # still screen-only placeholders
   app.dart       # MaterialApp.router root widget
   main.dart      # entry point: Hive.initFlutter(), opens the Hive boxes, ProviderScope
 assets/
@@ -209,6 +213,23 @@ sourced), then the ordering was cross-verified across two independent published
 enumerations (matching name-for-name from #64 on) before compiling the file,
 rather than relying on recall alone for a list this long. Core reference for the
 concept itself: Quran 7:180; Sahih al-Bukhari 2736; Sahih Muslim 2677.
+
+### Namaz Tracker (Phase 10)
+No Islamic content in this phase — a functional tracker, so no sourcing gate
+applies. `namaz_tracker` Hive box (`namazTrackerKey(date)` → `List<String>` of
+completed prayer names for that day, mirroring the `adhkar_progress` per-day-key
+shape from Phase 7) backs `NamazTrackerNotifier`/`namazTrackerProvider` for
+today's Fajr/Dhuhr/Asr/Maghrib/Isha completion — same synchronous
+never-await-the-write pattern as every other Hive-backed notifier. The screen
+(`NamazTrackerScreen`) is a 3-tab `DefaultTabController`: **Daily** (streak
+banner + 5 tappable prayer cards), **Weekly** (read-only last-7-days progress
+bars), **Monthly** (read-only calendar grid for the current month, each day
+shaded by completion fraction, today outlined). `DayCompletion` (date +
+completed set) and `NamazStats` (today/week/month/currentStreak) are pure
+helpers in `namaz_tracker_repository.dart` that read the Hive box directly,
+exposed via `namazStatsProvider`; `currentStreak` counts consecutive
+fully-complete days backward from today, only counting today itself once it's
+fully complete (so an unfinished today doesn't zero out a real streak).
 
 ## Coding conventions
 - Small, focused widgets. Extract reusable widgets into `core/widgets/`.

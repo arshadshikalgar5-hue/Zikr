@@ -7,4 +7,5 @@ abstract final class HiveBoxes {
   static const adhkarProgress = 'adhkar_progress';
   static const favoriteHadith = 'favorite_hadith';
   static const favoriteNames = 'favorite_names';
+  static const namazTracker = 'namaz_tracker';
 }

@@ -14,6 +14,7 @@ Future<void> main() async {
   await Hive.openBox(HiveBoxes.adhkarProgress);
   await Hive.openBox(HiveBoxes.favoriteHadith);
   await Hive.openBox(HiveBoxes.favoriteNames);
+  await Hive.openBox(HiveBoxes.namazTracker);
 
   runApp(const ProviderScope(child: ZikrApp()));
 }
