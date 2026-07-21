@@ -1,0 +1,92 @@
+[
+  {
+    "id": "faith-1",
+    "category": "Faith",
+    "arabic": "لَا يُؤْمِنُ أَحَدُكُمْ حَتَّى يُحِبَّ لِأَخِيهِ مَا يُحِبُّ لِنَفْسِهِ",
+    "translation": "None of you truly believes until he loves for his brother what he loves for himself.",
+    "book": "Sahih al-Bukhari",
+    "authenticityNote": "Sahih (Authentic)",
+    "reference": "Hadith 13"
+  },
+  {
+    "id": "prayer-1",
+    "category": "Prayer",
+    "arabic": "الصَّلَوَاتُ الْخَمْسُ، وَالْجُمُعَةُ إِلَى الْجُمُعَةِ، وَرَمَضَانُ إِلَى رَمَضَانَ، مُكَفِّرَاتٌ مَا بَيْنَهُنَّ إِذَا اجْتَنَبَ الْكَبَائِرَ",
+    "translation": "The five daily prayers, and from one Friday prayer to the next, and from Ramadan to Ramadan, are expiation for whatever sins come in between, so long as major sins are avoided.",
+    "book": "Sahih Muslim",
+    "authenticityNote": "Sahih (Authentic)",
+    "reference": "Hadith 233"
+  },
+  {
+    "id": "charity-1",
+    "category": "Charity",
+    "arabic": "مَا نَقَصَتْ صَدَقَةٌ مِنْ مَالٍ",
+    "translation": "Charity does not decrease wealth.",
+    "book": "Sahih Muslim",
+    "authenticityNote": "Sahih (Authentic)",
+    "reference": "Hadith 2588"
+  },
+  {
+    "id": "fasting-1",
+    "category": "Fasting",
+    "arabic": "مَنْ صَامَ رَمَضَانَ إِيمَانًا وَاحْتِسَابًا غُفِرَ لَهُ مَا تَقَدَّمَ مِنْ ذَنْبِهِ",
+    "translation": "Whoever fasts the month of Ramadan out of sincere faith and hoping for reward from Allah, his previous sins will be forgiven.",
+    "book": "Sahih al-Bukhari",
+    "authenticityNote": "Sahih (Authentic)",
+    "reference": "Hadith 38"
+  },
+  {
+    "id": "good-character-1",
+    "category": "Good Character",
+    "arabic": "إِنَّ مِنْ خِيَارِكُمْ أَحْسَنَكُمْ أَخْلَاقًا",
+    "translation": "The best among you are those with the best character.",
+    "book": "Sahih al-Bukhari",
+    "authenticityNote": "Sahih (Authentic)",
+    "reference": "Hadith 6035"
+  },
+  {
+    "id": "knowledge-1",
+    "category": "Knowledge",
+    "arabic": "مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا سَهَّلَ اللَّهُ لَهُ بِهِ طَرِيقًا إِلَى الْجَنَّةِ",
+    "translation": "Whoever follows a path in pursuit of knowledge, Allah will make easy for him a path to Paradise.",
+    "book": "Sahih Muslim",
+    "authenticityNote": "Sahih (Authentic)",
+    "reference": "Hadith 2699"
+  },
+  {
+    "id": "mercy-1",
+    "category": "Mercy & Kindness",
+    "arabic": "الرَّاحِمُونَ يَرْحَمُهُمُ الرَّحْمَنُ، ارْحَمُوا مَنْ فِي الْأَرْضِ يَرْحَمْكُمْ مَنْ فِي السَّمَاءِ",
+    "translation": "The merciful are shown mercy by the Most Merciful. Be merciful to those on earth, and He who is in the heavens will have mercy upon you.",
+    "book": "Jami' at-Tirmidhi",
+    "authenticityNote": "Sahih (graded Sahih by at-Tirmidhi)",
+    "reference": "Hadith 1924"
+  },
+  {
+    "id": "intentions-1",
+    "category": "Intentions",
+    "arabic": "إِنَّمَا الْأَعْمَالُ بِالنِّيَّاتِ، وَإِنَّمَا لِكُلِّ امْرِئٍ مَا نَوَى",
+    "translation": "Actions are judged by intentions, and every person will get what he intended.",
+    "book": "Sahih al-Bukhari",
+    "authenticityNote": "Sahih (Authentic)",
+    "reference": "Hadith 1"
+  },
+  {
+    "id": "patience-1",
+    "category": "Patience",
+    "arabic": "عَجَبًا لِأَمْرِ الْمُؤْمِنِ، إِنَّ أَمْرَهُ كُلَّهُ خَيْرٌ، وَلَيْسَ ذَاكَ لِأَحَدٍ إِلَّا لِلْمُؤْمِنِ: إِنْ أَصَابَتْهُ سَرَّاءُ شَكَرَ فَكَانَ خَيْرًا لَهُ، وَإِنْ أَصَابَتْهُ ضَرَّاءُ صَبَرَ فَكَانَ خَيْرًا لَهُ",
+    "translation": "Wondrous is the affair of the believer, for there is good in it all, and this applies to no one but the believer: if he experiences something pleasing, he is grateful, and that is good for him; if he experiences adversity, he is patient, and that is good for him.",
+    "book": "Sahih Muslim",
+    "authenticityNote": "Sahih (Authentic)",
+    "reference": "Hadith 2999"
+  },
+  {
+    "id": "parents-family-1",
+    "category": "Parents & Family",
+    "arabic": "قِيلَ: يَا رَسُولَ اللَّهِ، مَنْ أَحَقُّ النَّاسِ بِحُسْنِ صَحَابَتِي؟ قَالَ: أُمُّكَ، قَالَ: ثُمَّ مَنْ؟ قَالَ: ثُمَّ أُمُّكَ، قَالَ: ثُمَّ مَنْ؟ قَالَ: ثُمَّ أُمُّكَ، قَالَ: ثُمَّ مَنْ؟ قَالَ: ثُمَّ أَبُوكَ",
+    "translation": "It was said, \"O Messenger of Allah, who is most deserving of my good companionship?\" He said, \"Your mother.\" He said, \"Then who?\" He said, \"Then your mother.\" He said, \"Then who?\" He said, \"Then your mother.\" He said, \"Then who?\" He said, \"Then your father.\"",
+    "book": "Sahih Muslim",
+    "authenticityNote": "Sahih (Authentic)",
+    "reference": "Hadith 2548"
+  }
+]

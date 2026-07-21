@@ -72,6 +72,7 @@ flutter:
     - assets/data/dhikr.json
     - assets/data/duas.json
     - assets/data/adhkar.json
+    - assets/data/hadith.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
