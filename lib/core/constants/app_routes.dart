@@ -26,4 +26,5 @@ abstract final class AppRoutes {
   static const hadithCategory = '/hadith-category';
   static const hadithDetail = '/hadith-detail';
   static const nameDetail = '/name-detail';
+  static const prayerSettings = '/prayer-settings';
 }

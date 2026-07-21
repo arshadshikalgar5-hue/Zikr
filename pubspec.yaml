@@ -46,6 +46,16 @@ dependencies:
   # Declarative routing + the bottom-nav shell (StatefulShellRoute).
   go_router: ^17.3.0
 
+  # Prayer times: free offline astronomical calculation, no paid API.
+  adhan: ^2.0.0+1
+  # Device location for prayer times/qibla, no paid geocoding API.
+  geolocator: ^14.0.3
+  # Local (on-device) prayer time reminder notifications, no push service.
+  flutter_local_notifications: ^22.1.0
+  # IANA timezone database, bundled — used to display prayer times correctly
+  # for a manually-picked city regardless of the device's own timezone.
+  timezone: ^0.11.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -74,6 +84,7 @@ flutter:
     - assets/data/adhkar.json
     - assets/data/hadith.json
     - assets/data/names.json
+    - assets/data/cities.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

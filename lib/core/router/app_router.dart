@@ -24,6 +24,7 @@ import '../../features/more/more_screen.dart';
 import '../../features/namaz_tracker/namaz_tracker_screen.dart';
 import '../../features/names/name_detail_screen.dart';
 import '../../features/names/names_screen.dart';
+import '../../features/prayer_times/prayer_settings_screen.dart';
 import '../../features/prayer_times/prayer_times_screen.dart';
 import '../../features/progress/progress_screen.dart';
 import '../../features/qibla/qibla_screen.dart';
@@ -183,6 +184,11 @@ final GoRouter appRouter = GoRouter(
       path: AppRoutes.nameDetail,
       builder: (context, state) =>
           NameDetailScreen(name: state.extra! as NameEntry),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: AppRoutes.prayerSettings,
+      builder: (context, state) => const PrayerSettingsScreen(),
     ),
   ],
 );

@@ -18,6 +18,7 @@ Future<void> initTestHive() async {
   await Hive.openBox(HiveBoxes.favoriteHadith);
   await Hive.openBox(HiveBoxes.favoriteNames);
   await Hive.openBox(HiveBoxes.namazTracker);
+  await Hive.openBox(HiveBoxes.prayerSettings);
 }
 
 
