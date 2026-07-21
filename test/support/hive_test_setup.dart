@@ -17,7 +17,9 @@ Future<void> initTestHive() async {
   await Hive.openBox(HiveBoxes.adhkarProgress);
   await Hive.openBox(HiveBoxes.favoriteHadith);
   await Hive.openBox(HiveBoxes.favoriteNames);
+  await Hive.openBox(HiveBoxes.namazTracker);
 }
+
 
 /// Deliberately doesn't call `box.close()` / `Hive.deleteBoxFromDisk()`:
 /// after a widget under test has written to the box, closing it hangs
