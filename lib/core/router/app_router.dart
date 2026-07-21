@@ -5,6 +5,7 @@ import '../../data/custom_dhikr_repository.dart';
 import '../../data/dhikr_repository.dart';
 import '../../data/duas_repository.dart';
 import '../../data/hadith_repository.dart';
+import '../../data/names_repository.dart';
 import '../../features/adhkar/adhkar_checklist_screen.dart';
 import '../../features/adhkar/adhkar_screen.dart';
 import '../../features/custom_dhikr/custom_dhikr_form_screen.dart';
@@ -21,6 +22,7 @@ import '../../features/hadith/hadith_screen.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/more/more_screen.dart';
 import '../../features/namaz_tracker/namaz_tracker_screen.dart';
+import '../../features/names/name_detail_screen.dart';
 import '../../features/names/names_screen.dart';
 import '../../features/prayer_times/prayer_times_screen.dart';
 import '../../features/progress/progress_screen.dart';
@@ -175,6 +177,12 @@ final GoRouter appRouter = GoRouter(
       path: AppRoutes.hadithDetail,
       builder: (context, state) =>
           HadithDetailScreen(hadith: state.extra! as HadithEntry),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: AppRoutes.nameDetail,
+      builder: (context, state) =>
+          NameDetailScreen(name: state.extra! as NameEntry),
     ),
   ],
 );

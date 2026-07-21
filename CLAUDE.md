@@ -63,7 +63,10 @@ lib/
                  # per-period completed-id sets + morning/eveningAdhkarProgressProvider),
                  # hadith_repository.dart (HadithEntry model + JSON asset loader +
                  # hadithProvider + hadithCategoriesOf()), favorite_hadith_repository.dart
-                 # (Hive-backed favorite-id set + favoriteHadithProvider)
+                 # (Hive-backed favorite-id set + favoriteHadithProvider),
+                 # names_repository.dart (NameEntry model + JSON asset loader +
+                 # namesProvider), favorite_names_repository.dart (Hive-backed
+                 # favorite-id set + favoriteNamesProvider)
   features/      # one folder per feature:
                  # home (dashboard grid), tasbeeh (full feature: Hive-backed
                  # counter, goal/dhikr selection, sound/vibration), dhikr_library
@@ -73,7 +76,8 @@ lib/
                  # favorite toggle, cross-category search), adhkar (Morning/Evening
                  # hub with today's progress, checklist screen with checkboxes),
                  # hadith (same data-driven category/search/favorite shape as
-                 # duas), more (nav hub), prayer_times, names, namaz_tracker,
+                 # duas), names (flat 99-entry list, no categories — search +
+                 # favorite + detail), more (nav hub), prayer_times, namaz_tracker,
                  # qibla, favorites, progress, settings — the rest still
                  # screen-only placeholders
   app.dart       # MaterialApp.router root widget
@@ -82,8 +86,8 @@ assets/
   data/          # bundled JSON: dhikr.json (11 entries — see "Dhikr Library" below),
                  # duas.json (12 categories — see "Daily Duas" below), adhkar.json
                  # (13 morning + 14 evening entries — see "Morning & Evening Adhkar"
-                 # below), hadith.json (10 categories — see "Hadith" below).
-                 # names.json still to come.
+                 # below), hadith.json (10 categories — see "Hadith" below),
+                 # names.json (all 99 — see "99 Names of Allah" below).
   images/        # (empty so far)
   fonts/         # (empty so far) — for a locally-bundled Arabic-appropriate typeface later;
                  # deliberately not using google_fonts package, since its default
@@ -186,6 +190,25 @@ Phase 6's pattern rather than introducing a new one. Each entry carries `book`
 **Content sourcing**: same standard as Phases 4/6/7 — every entry is Sahih, from
 Sahih al-Bukhari, Sahih Muslim, or Jami' at-Tirmidhi, verified against sunnah.com
 before being added; you confirmed the drafted list before it was finalized.
+
+### 99 Names of Allah (Phase 9)
+`assets/data/names.json` bundles all 99 names (not a subset), in the traditional
+order, each with Arabic, transliteration, a short meaning, and a 1-sentence
+explanation. No categories — a flat list with search and favoriting
+(`favorite_names` box, `favoriteNamesProvider`), same shape as Duas/Hadith minus
+the category layer. Two pairs of names look identical when romanized but are
+distinct in Arabic and position: "Al-Waliyy" (#55, الولي, the Protecting Friend)
+vs. "Al-Wali" (#77, الوالي, the Governor), and "Al-Majeed" (#48, glory) vs.
+"Al-Maajid" (#65, nobility) — kept as separate entries with distinguishing
+transliteration spelling, matching how reference sources disambiguate them.
+**Content sourcing**: different shape from Phases 4/6/7/8 since this is the one
+complete, universally-agreed list rather than a curated subset — confirmed with
+you upfront that the standard published enumeration would be used (not
+individually hadith-cited per name, which isn't how this content is normally
+sourced), then the ordering was cross-verified across two independent published
+enumerations (matching name-for-name from #64 on) before compiling the file,
+rather than relying on recall alone for a list this long. Core reference for the
+concept itself: Quran 7:180; Sahih al-Bukhari 2736; Sahih Muslim 2677.
 
 ## Coding conventions
 - Small, focused widgets. Extract reusable widgets into `core/widgets/`.

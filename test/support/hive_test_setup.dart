@@ -16,6 +16,7 @@ Future<void> initTestHive() async {
   await Hive.openBox(HiveBoxes.favoriteDuas);
   await Hive.openBox(HiveBoxes.adhkarProgress);
   await Hive.openBox(HiveBoxes.favoriteHadith);
+  await Hive.openBox(HiveBoxes.favoriteNames);
 }
 
 /// Deliberately doesn't call `box.close()` / `Hive.deleteBoxFromDisk()`:

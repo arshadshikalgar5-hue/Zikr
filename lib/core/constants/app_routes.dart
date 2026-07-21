@@ -25,4 +25,5 @@ abstract final class AppRoutes {
   static const adhkarChecklist = '/adhkar-checklist';
   static const hadithCategory = '/hadith-category';
   static const hadithDetail = '/hadith-detail';
+  static const nameDetail = '/name-detail';
 }
