@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../data/custom_dhikr_repository.dart';
 import '../../data/dhikr_repository.dart';
 import '../../data/duas_repository.dart';
+import '../../data/hadith_repository.dart';
 import '../../features/adhkar/adhkar_checklist_screen.dart';
 import '../../features/adhkar/adhkar_screen.dart';
 import '../../features/custom_dhikr/custom_dhikr_form_screen.dart';
@@ -14,6 +15,8 @@ import '../../features/duas/dua_category_screen.dart';
 import '../../features/duas/dua_detail_screen.dart';
 import '../../features/duas/duas_screen.dart';
 import '../../features/favorites/favorites_screen.dart';
+import '../../features/hadith/hadith_category_screen.dart';
+import '../../features/hadith/hadith_detail_screen.dart';
 import '../../features/hadith/hadith_screen.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/more/more_screen.dart';
@@ -160,6 +163,18 @@ final GoRouter appRouter = GoRouter(
       path: AppRoutes.adhkarChecklist,
       builder: (context, state) =>
           AdhkarChecklistScreen(period: state.extra! as String),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: AppRoutes.hadithCategory,
+      builder: (context, state) =>
+          HadithCategoryScreen(category: state.extra! as String),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: AppRoutes.hadithDetail,
+      builder: (context, state) =>
+          HadithDetailScreen(hadith: state.extra! as HadithEntry),
     ),
   ],
 );

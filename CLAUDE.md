@@ -60,7 +60,10 @@ lib/
                  # (Hive-backed favorite-id set + favoriteDuasProvider),
                  # adhkar_repository.dart (AdhkarEntry model + JSON asset loader +
                  # adhkarProvider), adhkar_progress_repository.dart (per-day
-                 # per-period completed-id sets + morning/eveningAdhkarProgressProvider)
+                 # per-period completed-id sets + morning/eveningAdhkarProgressProvider),
+                 # hadith_repository.dart (HadithEntry model + JSON asset loader +
+                 # hadithProvider + hadithCategoriesOf()), favorite_hadith_repository.dart
+                 # (Hive-backed favorite-id set + favoriteHadithProvider)
   features/      # one folder per feature:
                  # home (dashboard grid), tasbeeh (full feature: Hive-backed
                  # counter, goal/dhikr selection, sound/vibration), dhikr_library
@@ -69,7 +72,8 @@ lib/
                  # (data-driven category list, category → dua list, detail with
                  # favorite toggle, cross-category search), adhkar (Morning/Evening
                  # hub with today's progress, checklist screen with checkboxes),
-                 # more (nav hub), prayer_times, hadith, names, namaz_tracker,
+                 # hadith (same data-driven category/search/favorite shape as
+                 # duas), more (nav hub), prayer_times, names, namaz_tracker,
                  # qibla, favorites, progress, settings — the rest still
                  # screen-only placeholders
   app.dart       # MaterialApp.router root widget
@@ -78,7 +82,8 @@ assets/
   data/          # bundled JSON: dhikr.json (11 entries — see "Dhikr Library" below),
                  # duas.json (12 categories — see "Daily Duas" below), adhkar.json
                  # (13 morning + 14 evening entries — see "Morning & Evening Adhkar"
-                 # below). hadith.json, names.json still to come.
+                 # below), hadith.json (10 categories — see "Hadith" below).
+                 # names.json still to come.
   images/        # (empty so far)
   fonts/         # (empty so far) — for a locally-bundled Arabic-appropriate typeface later;
                  # deliberately not using google_fonts package, since its default
@@ -167,6 +172,20 @@ Phases 5–6. **Content sourcing**: same standard as Phases 4/6, confirmed with 
 before finalizing — you asked for two additions (the tahlil/istighfar ×100 duo and
 the last two verses of Al-Baqarah) beyond the initial draft, both verified against
 sunnah.com/quran.com before being added.
+
+### Hadith (Phase 8)
+`assets/data/hadith.json` bundles 10 categories (Faith, Prayer, Charity, Fasting,
+Good Character, Knowledge, Mercy & Kindness, Intentions, Patience, Parents &
+Family), one hadith each to start. Same data-driven shape as Daily Duas —
+category list derived from whichever `category` values are present
+(`hadithCategoriesOf()`), category browsing, cross-category `SearchDelegate`, and
+Hive-backed favoriting (`favorite_hadith` box, `favoriteHadithProvider`) all mirror
+Phase 6's pattern rather than introducing a new one. Each entry carries `book`
+(the collection name), `authenticityNote` (grading, e.g. "Sahih (Authentic)"), and
+`reference` (hadith number) as separate fields, shown on the detail screen.
+**Content sourcing**: same standard as Phases 4/6/7 — every entry is Sahih, from
+Sahih al-Bukhari, Sahih Muslim, or Jami' at-Tirmidhi, verified against sunnah.com
+before being added; you confirmed the drafted list before it was finalized.
 
 ## Coding conventions
 - Small, focused widgets. Extract reusable widgets into `core/widgets/`.

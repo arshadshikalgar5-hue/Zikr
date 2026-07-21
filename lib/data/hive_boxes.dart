@@ -5,4 +5,5 @@ abstract final class HiveBoxes {
   static const customDhikr = 'custom_dhikr';
   static const favoriteDuas = 'favorite_duas';
   static const adhkarProgress = 'adhkar_progress';
+  static const favoriteHadith = 'favorite_hadith';
 }
