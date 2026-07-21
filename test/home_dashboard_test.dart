@@ -6,6 +6,8 @@ import 'package:zikr/app.dart';
 import 'package:zikr/core/constants/app_routes.dart';
 import 'package:zikr/core/router/app_router.dart';
 
+import 'support/hive_test_setup.dart';
+
 /// The dashboard grid has 6 rows; give the test surface enough height that
 /// GridView.builder lays out every row without needing a scroll.
 ///
@@ -24,6 +26,11 @@ Future<void> _pumpTallApp(WidgetTester tester) async {
 }
 
 void main() {
+  // The Prayer Times tab reads from Hive, so it needs to be initialized
+  // even though most of these tests don't exercise that screen.
+  setUpAll(initTestHive);
+  tearDownAll(disposeTestHive);
+
   testWidgets('dashboard renders all 11 cards', (tester) async {
     await _pumpTallApp(tester);
 

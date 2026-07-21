@@ -8,4 +8,5 @@ abstract final class HiveBoxes {
   static const favoriteHadith = 'favorite_hadith';
   static const favoriteNames = 'favorite_names';
   static const namazTracker = 'namaz_tracker';
+  static const prayerSettings = 'prayer_settings';
 }

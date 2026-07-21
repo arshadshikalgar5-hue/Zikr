@@ -31,8 +31,10 @@ released. This file is permanent context — read it at the start of every sessi
   each feature folder is presentation-only for now. Per-feature `data/`/`domain/`
   split will be introduced only if/when a feature's logic grows complex enough to
   need it — not created preemptively.
-- Prayer times: free offline calculation package (e.g. `adhan` dart port), no paid API
-  — not yet added, will be introduced in the prayer times phase.
+- Prayer times: `adhan` (free offline astronomical calculation, no paid API) —
+  added in Phase 11. Device location via `geolocator`; reminder notifications via
+  `flutter_local_notifications` + `timezone` (bundled IANA database). See Phase 11
+  below.
 - Qibla: device compass + geolocation, no paid API — not yet added, will be
   introduced in the qibla phase.
 
@@ -69,7 +71,17 @@ lib/
                  # favorite-id set + favoriteNamesProvider), namaz_tracker_repository.dart
                  # (namazPrayers list + per-day completed-prayer sets +
                  # namazTrackerProvider + DayCompletion/NamazStats aggregation +
-                 # namazStatsProvider)
+                 # namazStatsProvider), cities_repository.dart (CityEntry model +
+                 # JSON asset loader + citiesProvider — bundled manual-location
+                 # fallback list), prayer_location_repository.dart (CachedLocation
+                 # model + Hive-backed device/manual location cache +
+                 # prayerLocationProvider), prayer_settings_repository.dart
+                 # (PrayerSettings model: calculation method/madhab/notifications
+                 # toggle + Hive-backed prayerSettingsProvider + method/madhab
+                 # label maps), prayer_times_repository.dart (pure adhan
+                 # calculation + DailyPrayerTimes model + todayPrayerTimesProvider),
+                 # prayer_notifications_repository.dart (flutter_local_notifications
+                 # setup + today's-remaining-prayers scheduling)
   features/      # one folder per feature:
                  # home (dashboard grid), tasbeeh (full feature: Hive-backed
                  # counter, goal/dhikr selection, sound/vibration), dhikr_library
@@ -81,9 +93,11 @@ lib/
                  # hadith (same data-driven category/search/favorite shape as
                  # duas), names (flat 99-entry list, no categories — search +
                  # favorite + detail), namaz_tracker (Daily/Weekly/Monthly tabs,
-                 # tap-to-toggle prayer cards, streak banner), more (nav hub),
-                 # prayer_times, qibla, favorites, progress, settings — the rest
-                 # still screen-only placeholders
+                 # tap-to-toggle prayer cards, streak banner), prayer_times
+                 # (today's 6 prayer/sunrise times, location card with device/
+                 # manual-city switch, next-prayer banner, settings sub-screen for
+                 # method/madhab/notifications), more (nav hub), qibla, favorites,
+                 # progress, settings — the rest still screen-only placeholders
   app.dart       # MaterialApp.router root widget
   main.dart      # entry point: Hive.initFlutter(), opens the Hive boxes, ProviderScope
 assets/
@@ -91,7 +105,8 @@ assets/
                  # duas.json (12 categories — see "Daily Duas" below), adhkar.json
                  # (13 morning + 14 evening entries — see "Morning & Evening Adhkar"
                  # below), hadith.json (10 categories — see "Hadith" below),
-                 # names.json (all 99 — see "99 Names of Allah" below).
+                 # names.json (all 99 — see "99 Names of Allah" below),
+                 # cities.json (127 major world cities — see "Prayer Times" below).
   images/        # (empty so far)
   fonts/         # (empty so far) — for a locally-bundled Arabic-appropriate typeface later;
                  # deliberately not using google_fonts package, since its default
@@ -231,6 +246,55 @@ exposed via `namazStatsProvider`; `currentStreak` counts consecutive
 fully-complete days backward from today, only counting today itself once it's
 fully complete (so an unfinished today doesn't zero out a real streak).
 
+### Prayer Times (Phase 11)
+No Islamic content in this phase either — a calculation/notification feature, so
+no sourcing gate applies. Adds 4 packages: `adhan` (pure offline astronomical
+calculation — coordinates + date in, prayer times out, no network of any kind),
+`geolocator` (device GPS), `flutter_local_notifications` + `timezone` (local
+reminder scheduling; the timezone package's bundled IANA database is compiled
+into the app, not fetched).
+
+**Location**: device GPS (with the standard permission flow: check → request →
+handle denied/deniedForever) or a manual pick from `assets/data/cities.json` (127
+bundled major cities — name, country, lat/lon, IANA timezone id). Either way the
+result is cached as a `CachedLocation` in the `prayer_settings` Hive box under the
+`location` key, so prayer times still compute fully offline on every subsequent
+launch without needing a fresh GPS fix. The Prayer Times screen shows an empty
+state with "Use My Location" / "Choose a City" buttons until a location exists,
+then the times screen with a "Change" action.
+
+**Calculation**: `computePrayerTimes()` always calls `PrayerTimes.utc(...)` (raw
+UTC output) rather than adhan's default local-time conversion, then converts to
+display time itself — `.toLocal()` for a device-sourced location (correct because
+the device's own system timezone already matches wherever its GPS says it is), or
+`tz.TZDateTime.from(utc, tz.getLocation(city.timezone))` for a manually-picked
+city (so a picked city displays in *its own* local time, not the device's — no
+separate device-timezone-detection package needed, since the device case never
+touches the `timezone` package at all). Calculation method (11 of adhan's presets,
+`other` excluded as meaningless on its own) and Madhab (Shafi/Hanafi, affecting
+only Asr) are user-selectable on a dedicated Prayer Settings screen
+(`PrayerSettingsScreen`, `/prayer-settings`) and persisted in the same
+`prayer_settings` box (`method`/`madhab` keys), read back via
+`CalculationMethod.values`/`Madhab.values` `.name` round-tripping.
+
+**Notifications**: deliberately "today's remaining prayers only", not a recurring
+schedule — prayer times shift by a few minutes daily, so `scheduleTodayPrayerNotifications()`
+cancels everything and re-schedules from scratch. It's called via `ref.listen` on
+the Prayer Times screen whenever `todayPrayerTimesProvider` changes (new location,
+changed method/madhab) or the notifications toggle flips, which in practice means
+"every time the user opens the tab" — acceptable for a typical daily-open usage
+pattern without needing a background task scheduler (WorkManager, etc., which
+would add real complexity for comparatively little benefit here). Enabling the
+toggle requests Android's `POST_NOTIFICATIONS` and exact-alarm permissions;
+scheduling failures (e.g. exact-alarm permission missing) are caught per-prayer
+so one failure doesn't drop the rest of the day's reminders.
+
+**Android setup**: `flutter_local_notifications` 22.x requires core library
+desugaring — added `isCoreLibraryDesugaringEnabled = true` plus the
+`desugar_jdk_libs` dependency to `android/app/build.gradle.kts`. Manifest gained
+`ACCESS_FINE_LOCATION`/`ACCESS_COARSE_LOCATION` (geolocator doesn't merge these
+in automatically) and `POST_NOTIFICATIONS`/`SCHEDULE_EXACT_ALARM`/`USE_EXACT_ALARM`.
+
 ## Coding conventions
 - Small, focused widgets. Extract reusable widgets into `core/widgets/`.
 - Comment non-obvious logic, especially Islamic content structures and calculation
@@ -262,6 +326,17 @@ fully complete (so an unfinished today doesn't zero out a real streak).
   `SystemSound.play`/`HapticFeedback` (i.e. anything that taps the Tasbeeh ring) —
   see `test/support/mock_platform_channels.dart`. Without it the call hangs the
   same way an awaited Hive write does.
+- **Call `tz.initializeTimeZones()`** (from `package:timezone/data/latest.dart`)
+  in `setUpAll` before any test that renders prayer times for a manually-picked
+  city — `main.dart` normally does this at startup, but tests build `ZikrApp()`
+  directly without ever running `main()`. See
+  `test/prayer_times/prayer_times_test_helpers.dart`. Device-location prayer
+  times don't need it (they never touch the `timezone` package), but it's
+  harmless to always include once a test file touches Prayer Times at all.
+- Any test file that visits a screen touching a Hive box must open every box
+  (via `initTestHive`/`disposeTestHive`), even boxes unrelated to what the test
+  is checking — e.g. `test/home_dashboard_test.dart` needs the full set once its
+  "switch to Prayer Times tab" case exists, not just the boxes Home itself uses.
 
 ## Update system (GitHub-based, no Play Store)
 - A `version.json` file hosted on a public GitHub repo (or Release) contains the
