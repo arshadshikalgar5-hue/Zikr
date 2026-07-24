@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import '../../data/cities_repository.dart';
 
 /// Searches bundled cities by name or country, for the manual location
-/// fallback. Selecting a result closes the search and returns it.
+/// fallback shared by Prayer Times and Qibla. Selecting a result closes the
+/// search and returns it.
 class CitySearchDelegate extends SearchDelegate<CityEntry?> {
   CitySearchDelegate(this._allCities);
 
