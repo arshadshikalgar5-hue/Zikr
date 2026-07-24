@@ -55,6 +55,8 @@ dependencies:
   # IANA timezone database, bundled — used to display prayer times correctly
   # for a manually-picked city regardless of the device's own timezone.
   timezone: ^0.11.1
+  # Device magnetometer heading for the Qibla compass, no paid API.
+  flutter_compass: ^0.8.1
 
 dev_dependencies:
   flutter_test:

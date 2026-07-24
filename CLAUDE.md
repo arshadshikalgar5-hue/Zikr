@@ -35,8 +35,9 @@ released. This file is permanent context — read it at the start of every sessi
   added in Phase 11. Device location via `geolocator`; reminder notifications via
   `flutter_local_notifications` + `timezone` (bundled IANA database). See Phase 11
   below.
-- Qibla: device compass + geolocation, no paid API — not yet added, will be
-  introduced in the qibla phase.
+- Qibla: `flutter_compass` (device magnetometer heading) + the same
+  `geolocator`/cached-location infrastructure as Prayer Times, direction
+  computed via adhan's own `Qibla` class — added in Phase 12, no paid API.
 
 ## Build / run commands
 - `flutter pub get` — install dependencies
@@ -52,7 +53,14 @@ lib/
     constants/   # app_routes.dart — centralised route path strings
     router/      # app_router.dart (GoRouter config), navigation_shell.dart (bottom nav)
     theme/       # app_colors.dart, app_theme.dart (light/dark ThemeData)
-    widgets/     # shared reusable widgets, e.g. placeholder_screen.dart
+    widgets/     # shared reusable widgets: placeholder_screen.dart,
+                 # city_search_delegate.dart (SearchDelegate<CityEntry?> over
+                 # the bundled cities list), location_picker.dart
+                 # (LocationPickerMixin: useDeviceLocation/chooseCity/
+                 # showChangeLocationSheet, shared by Prayer Times + Qibla,
+                 # both against the one prayerLocationProvider; plus the
+                 # LocationPickerPrompt empty-state and CachedLocationCard
+                 # widgets)
   data/          # shared data sources: hive_boxes.dart (box name constants),
                  # dhikr_repository.dart (DhikrEntry model + JSON asset loader +
                  # dhikrLibraryProvider), custom_dhikr_repository.dart
@@ -96,8 +104,12 @@ lib/
                  # tap-to-toggle prayer cards, streak banner), prayer_times
                  # (today's 6 prayer/sunrise times, location card with device/
                  # manual-city switch, next-prayer banner, settings sub-screen for
-                 # method/madhab/notifications), more (nav hub), qibla, favorites,
-                 # progress, settings — the rest still screen-only placeholders
+                 # method/madhab/notifications), qibla (rotating-arrow compass
+                 # over the device heading, "facing Qibla" state, bearing +
+                 # distance to the Kaaba — shares its location UI with Prayer
+                 # Times via core/widgets/location_picker.dart), more (nav hub),
+                 # favorites, progress, settings — the rest still screen-only
+                 # placeholders
   app.dart       # MaterialApp.router root widget
   main.dart      # entry point: Hive.initFlutter(), opens the Hive boxes, ProviderScope
 assets/
@@ -295,6 +307,47 @@ desugaring — added `isCoreLibraryDesugaringEnabled = true` plus the
 `ACCESS_FINE_LOCATION`/`ACCESS_COARSE_LOCATION` (geolocator doesn't merge these
 in automatically) and `POST_NOTIFICATIONS`/`SCHEDULE_EXACT_ALARM`/`USE_EXACT_ALARM`.
 
+### Qibla (Phase 12)
+No Islamic content in this phase either — a calculation/sensor feature, so no
+sourcing gate applies. Reuses Phase 11's location infrastructure wholesale
+rather than duplicating it: `QiblaScreen` reads the same `prayerLocationProvider`
+(device GPS or a manually-picked city), so a location picked on either screen
+carries over to the other. That reuse prompted extracting the location-picking
+UI out of `features/prayer_times/` into shared `core/widgets/` — see the Folder
+structure entry above — rather than copy-pasting an "empty state + change
+location sheet" a second time.
+
+**Bearing**: `Qibla(Coordinates(lat, lon)).direction` (from the `adhan`
+package — the same library already in use for prayer times, which happens to
+ship its own qibla-bearing calculation) gives degrees clockwise from true
+north. Distance to the Kaaba uses `Geolocator.distanceBetween()` against
+`Qibla.MAKKAH`.
+
+**Compass UI**: `flutter_compass` streams the device's magnetometer heading
+(0-360°, 0 = north). Deliberately *not* a rotating N/E/S/W dial — a dial that
+doesn't itself rotate with the device wouldn't correspond to real compass
+directions, and one that does needs cardinal labels to stay correct, adding
+complexity for a feature whose whole point is "point your phone until the
+arrow lines up." Instead: a fixed tick-mark ring + fixed top marker
+(representing wherever the phone's top is physically pointing), and a single
+arrow rotated by `(qiblaBearing - heading)` so it always points at the Kaaba
+in real-world space as the device turns — when the arrow points straight up
+(within 5°), the app shows a "Facing the Qibla" state (accent color + label).
+No magnetic-declination correction is applied (heading is treated as
+approximately true north) — reasonable for "simple, clear compass UI" scope,
+not a survey-grade instrument.
+
+**Testing gotcha**: `FlutterCompass.events` never emits under `flutter test`
+(no real magnetometer), so the compass sits in its "waiting for a reading"
+state — an indeterminate `CircularProgressIndicator` — for the rest of the
+test. `pumpAndSettle()` waits for all animations to finish, which never
+happens with an indeterminate spinner, so any Qibla test with a location
+already set must use bounded `tester.pump()` calls instead once past the
+initial navigation. See `test/qibla/qibla_test_helpers.dart` and the new
+`mockCompassChannel()` in `test/support/mock_platform_channels.dart` (same
+"stub the channel so `flutter_compass`'s EventChannel doesn't hang forever
+waiting for a platform reply" reasoning as `mockSystemChannels()`).
+
 ## Coding conventions
 - Small, focused widgets. Extract reusable widgets into `core/widgets/`.
 - Comment non-obvious logic, especially Islamic content structures and calculation
@@ -337,6 +390,13 @@ in automatically) and `POST_NOTIFICATIONS`/`SCHEDULE_EXACT_ALARM`/`USE_EXACT_ALA
   (via `initTestHive`/`disposeTestHive`), even boxes unrelated to what the test
   is checking — e.g. `test/home_dashboard_test.dart` needs the full set once its
   "switch to Prayer Times tab" case exists, not just the boxes Home itself uses.
+- **Mock the compass EventChannel** (`mockCompassChannel()` in
+  `test/support/mock_platform_channels.dart`) before any test that renders the
+  Qibla screen — same hang-forever problem as `SystemChannels.platform`. And
+  because the mocked channel never actually delivers a heading, any such test
+  must use bounded `tester.pump()` calls instead of `pumpAndSettle()` once a
+  location is set — the compass's indeterminate loading spinner never
+  "settles". See `test/qibla/qibla_test_helpers.dart`.
 
 ## Update system (GitHub-based, no Play Store)
 - A `version.json` file hosted on a public GitHub repo (or Release) contains the
